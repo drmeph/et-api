@@ -1,0 +1,515 @@
+openapi: 3.0.1
+info:
+  title: Enriched Transaction
+  description: Enhance the post-transaction experience by displaying enriched transactions
+    within a banking application or website. The level of information displayed can
+    range from basic enrichment details, such as clean merchant name, to digital receipts.
+  contact:
+    name: Mastercard Enriched Transactions Team
+    email: apisupport@mastercard.com
+  version: 1.0.0
+servers:
+  - url: https://api.mastercard.com/<service-access-path>
+    description: Production server (uses live data)
+  - url: https://sandbox.api.mastercard.com/<service-access-path>
+    description: Sandbox server (testing environment)
+tags:
+  - name: Enriched Transaction
+    description: Enriched Transaction api
+paths:
+  /enriched-transactions/searches:
+    post:
+      tags:
+        - Enriched Transaction
+      summary: Searches for the enriched merchant and transaction information according
+        to the given criteria.
+      operationId: search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnrichedTransactionRequest'
+        required: true
+      responses:
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrichedTransactionResponse'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        Source:
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: Source of the error
+          example: SERVICE
+        ReasonCode:
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: Unique code identifying the error case
+          example: RESULT_CODE
+        Description:
+          maxLength: 1000
+          minLength: 0
+          type: string
+          description: Short description of the error
+          example: Short description of the error
+        Recoverable:
+          type: boolean
+          description: Indicates whether this error will always be returned for this
+            request, or retrying could change the outcome
+          example: false
+          default: false
+        Details:
+          maxLength: 1000
+          minLength: 0
+          type: string
+          description: Optional detailed description of the issue
+          example: Detailed description of the error
+      description: Error object
+    ErrorResponse:
+      required:
+        - Errors
+      type: object
+      properties:
+        Errors:
+          $ref: '#/components/schemas/Errors'
+      description: Error Response object
+    Errors:
+      required:
+        - Error
+      type: object
+      properties:
+        Error:
+          type: array
+          description: List of error objects
+          items:
+            $ref: '#/components/schemas/Error'
+      description: Errors object
+    EnrichedTransactionRequest:
+      required:
+        - searchCriteria
+      type: object
+      properties:
+        searchCriteria:
+          title: Search Criteria
+          maxItems: 5
+          minItems: 1
+          type: array
+          description: List of enriched transaction search criteria
+          items:
+            $ref: '#/components/schemas/EnrichedTransactionSearchCriteria'
+      description: Enriched transaction api request
+    EnrichedTransactionSearchCriteria:
+      title: Search Criteria
+      required:
+        - merchantCriteria
+      type: object
+      properties:
+        merchantCriteria:
+          $ref: '#/components/schemas/MerchantCriteria'
+        transactionCriteria:
+          $ref: '#/components/schemas/TransactionCriteria'
+      description: Enriched transaction search criteria
+    MerchantCriteria:
+      title: Merchant Search Criteria
+      required:
+        - cardAcceptorName
+      type: object
+      properties:
+        cardAcceptorName:
+          title: Card Acceptor Name
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: |-
+            Merchant 'doing business as' name, or website name
+            Mastercard/ISO 8583: DE 43, Subfield 1; Card Acceptor Name (or Payment Facilitator & associated merchant, if applicable)
+            Visa: TC 05, positions 92-116; Merchant Name
+          example: SHOE STORE 1234
+        cardAcceptorLocation:
+          title: Card Acceptor Location
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: |-
+            Merchant city, telephone number, email address, or URL
+            Mastercard/ISO 8583: DE 43, Subfield 3: Card Acceptor City
+            Visa: TC 05, positions 117-129: Merchant City
+          example: AUSTIN
+        cardAcceptorRegionCode:
+          title: Card Acceptor Region Code
+          maxLength: 3
+          minLength: 2
+          pattern: ^[A-Za-z0-9]*$
+          type: string
+          description: |-
+            Merchant U.S. state code (ISO 3166-2:US), Canada province code (ISO 3166-2:CA), or country code (ISO 3166-1 alpha-2 or alpha-3)
+            Mastercard/ISO 8583: DE 43, Subfield 5: Card Acceptor State or Country Code
+            Visa: TC 05, positions 142-144: Merchant State/Province Code, or positions 130-132: Merchant Country Code
+          example: TX
+        merchantCategoryCode:
+          title: Merchant Category Code
+          maxLength: 4
+          minLength: 4
+          pattern: ^[0-9]*$
+          type: string
+          description: Merchant Category Code (MCC) of the merchant
+          example: "1234"
+        merchantIdentifierType:
+          title: Merchant Identifier Type
+          type: string
+          description: Could include SE# (AMEX's Service Establishment) or CAID (Card
+            Acceptor ID)
+          example: CAID
+          enum:
+            - SE_NUM
+            - CAID
+        merchantIdentifierValue:
+          title: Merchant Identifier Value
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Merchant identifier value associated with the type specified
+            in merchantIdentifierType
+          example: "123456789"
+      description: Merchant Search Criteria
+    TransactionAmount:
+      title: Transaction Amount
+      required:
+        - currencyCode
+        - value
+      type: object
+      properties:
+        value:
+          title: Transaction Value
+          maxLength: 12
+          minLength: 2
+          type: string
+          description: Total amount value associated with the transaction.<br>Decimal
+            point period expected to denote separation of the fractional suffix from
+            the rest of the amount, if applicable for the currency. Decimal point
+            period must not be the first character. Examples:<br>- USD exponent is
+            2, so $250 USD value should be represented as 250.00, 34&cent; USD value
+            should be represented as 0.34<br>- JPY exponent is 0, so &yen;250 JPY
+            value should be represented as 250
+          example: "250.0"
+        currencyCode:
+          title: Transaction Currency Code
+          maxLength: 3
+          minLength: 3
+          type: string
+          description: Alphabetic currency code associated with value in ISO 4217
+            format
+          example: USD
+      description: Total amount value and currency associated with the transaction
+    TransactionCriteria:
+      title: Transaction Search Criteria
+      type: object
+      properties:
+        transactionIdentifierType:
+          title: Transaction Identifier Type
+          type: string
+          description: Expected to include references to brand-specific transaction
+            identifier fields (e.g., Mastercard DE37 Retrieval Reference Number, Visa
+            TCR1 Purchase Identifier)
+          example: MASTERCARD_RETRIEVAL_REF_NUM
+        transactionIdentifierValue:
+          title: Transaction Identifier Value
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Transaction identifier value associated with the type specified
+            in transactionIdentifierType
+          example: "123456"
+        acquirerReferenceNumber:
+          title: Acquirer Reference Number (ARN)
+          maxLength: 23
+          minLength: 23
+          type: string
+          description: Acquired Reference Number of the transaction
+          example: "12345678901234567890123"
+        transactionDateTime:
+          title: Transaction Date and/or Time
+          maxLength: 25
+          minLength: 10
+          type: string
+          description: Date, time, and time zone of the transaction (e.g., 2020-06-18T17:11:05-05:00),
+            OR<br>Date and time of the transaction in Coordinated Universal Time (UTC)
+            (e.g., 2020-06-18T17:11:05+00:00), OR<br>If time or time zone is unknown,
+            then date of the transaction (e.g., 2020-06-18). ISO 8601 format
+          example: 2020-06-18T17:11:05-05:00
+        transactionAmount:
+          $ref: '#/components/schemas/TransactionAmount'
+        cardFirstSix:
+          title: First six characters of card
+          maxLength: 6
+          minLength: 6
+          type: string
+          description: First six characters of the card used in transaction
+          example: "123456"
+        cardLastFour:
+          title: Last four characters of card
+          maxLength: 4
+          minLength: 4
+          type: string
+          description: Last four characters of the card used in transaction
+          example: "1234"
+        issuerAuthorizationCode:
+          title: Issuer Authorization Code
+          maxLength: 6
+          minLength: 6
+          type: string
+          description: Transaction's Issuer Authorization Code
+          example: "123456"
+      description: Criteria for transaction search
+    Address:
+      title: Address
+      type: object
+      properties:
+        line1:
+          title: Line 1
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: |-
+            Line 1 of the street address of the merchant.
+            Usually includes the street number and name.
+          example: 100 Main St
+        line2:
+          title: Line 2
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: Line 2 of the street address of the merchant. Usually suite
+            number.
+          example: Suite 100
+        city:
+          title: City
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: Name of the city or town where the merchant is located
+          example: Toronto
+        countryCode:
+          title: Country
+          maxLength: 2
+          minLength: 2
+          type: string
+          description: Country code in ISO-3166-1 alpha 2 format
+          example: CA
+        countrySubdivisionCode:
+          title: State/Province/Territory
+          maxLength: 2
+          minLength: 2
+          type: string
+          description: State, province, or territory code in ISO 3166-2 format
+          example: US-NY
+        postalCode:
+          title: Postal Code
+          maxLength: 10
+          minLength: 0
+          type: string
+          description: Postal code where the merchant is located
+          example: M2N 6N5
+      description: Address model
+    EnrichedTransactionResponse:
+      type: object
+      properties:
+        searchResults:
+          title: Enriched Transaction Search Results
+          type: array
+          description: List of enriched transaction search results
+          items:
+            $ref: '#/components/schemas/EnrichedTransactionSearchResult'
+      description: Enriched transaction api response
+    EnrichedTransactionSearchResult:
+      title: Enriched Transaction Search Results
+      required:
+        - resultStatus
+      type: object
+      properties:
+        resultStatus:
+          $ref: '#/components/schemas/ResultStatus'
+        merchantResult:
+          $ref: '#/components/schemas/MerchantResult'
+      description: Enriched transaction search result
+    Logo:
+      title: Logos
+      type: object
+      properties:
+        logoSize:
+          title: Logo Size
+          maxLength: 10
+          minLength: 0
+          type: string
+          description: Size of logo
+          example: SMALL
+        logoUrl:
+          title: Logo URL
+          maxLength: 200
+          minLength: 0
+          type: string
+          description: Absolute URL to access the logo image for the merchant.
+      description: Logo of the merchant
+    MerchantResult:
+      title: Merchant Result
+      required:
+        - merchantName
+      type: object
+      properties:
+        merchantName:
+          title: Merchant Name
+          maxLength: 100
+          minLength: 1
+          type: string
+          description: Brand name of the merchant.
+          example: Epic Games
+        address:
+          $ref: '#/components/schemas/Address'
+        phone:
+          title: Phone
+          maxLength: 15
+          minLength: 10
+          type: string
+          description: Phone number of the merchant in E.123 international notation
+          example: +1 512 555 1234
+        merchantCategoryCode:
+          title: Merchant Category Code
+          maxLength: 4
+          minLength: 4
+          type: string
+          description: Merchant category code associated with the merchant category
+            code for the merchant
+          example: "5814"
+        merchantCategoryDescription:
+          title: Merchant Category Description
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: Merchant category description associated with the merchant
+            category code for the merchant
+          example: FAST FOOD RESTAURANTS
+        description:
+          title: Description of products and services
+          maxLength: 1000
+          minLength: 0
+          type: string
+          description: Brief description of the merchant's products and/or services.
+          example: FAST FOOD RESTAURANTS
+        email:
+          title: Email
+          maxLength: 254
+          minLength: 0
+          type: string
+          description: Contact email address of the merchant.
+          example: contact@merchant.com
+        websiteUrl:
+          title: Website URL
+          maxLength: 200
+          minLength: 0
+          type: string
+          description: Website URL of the merchant.
+          example: https://www.merchant.com
+        logos:
+          title: Logos
+          type: array
+          description: List of logos for the merchant.
+          items:
+            $ref: '#/components/schemas/Logo'
+        purchaseLocation:
+          $ref: '#/components/schemas/PurchaseLocation'
+        purchaseReceipt:
+          $ref: '#/components/schemas/PurchaseReceipt'
+      description: Merchant search result model
+    PurchaseLocation:
+      title: Purchase Location
+      type: object
+      properties:
+        latitude:
+          title: Latitude
+          maxLength: 11
+          minLength: 0
+          type: string
+          description: Latitude coordinate where the purchase was made
+          example: "38.777534"
+        longitude:
+          title: Longitude
+          maxLength: 11
+          minLength: 0
+          type: string
+          description: Longitude coordinate where the purchase was made
+          example: -90.699761
+      description: Information associated with the physical location of the purchase
+    PurchaseReceipt:
+      title: Purchase Receipt
+      type: object
+      properties:
+        url:
+          title: Receipt URL
+          maxLength: 200
+          minLength: 0
+          type: string
+          description: Absolute URL to the receipt (via Ethoca API). The URL must
+            contain merchantGUID and subMerchantID parameters
+          example: https://www.purchaceReceipt.com/1234
+        expiresOn:
+          title: Receipt Expiry
+          maxLength: 25
+          minLength: 25
+          type: string
+          description: Timestamp when the purchase receipt expires in Coordinated
+            Universal Time (UTC). ISO 8601 format
+          example: yyyy-mm-ddThh:mm:ssZ
+      description: Information associated with the purchase receipt.
+    ResultStatus:
+      title: Result Status
+      required:
+        - code
+      type: object
+      properties:
+        code:
+          title: Code
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: API Status code, not a HTTP status code
+          example: MERCHANT_FOUND
+        message:
+          title: Message
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: API Status message, not a HTTP status message
+          example: Invalid or missing request parameter name or value.
+      description: Result status of the request
