@@ -2,12 +2,33 @@
 
 ## Table of Contents
 - [Overview](#overview)
-    * [Compatibility](#compatibility)
-    * [References](#references)
+  * [Compatibility](#compatibility)
+  * [References](#references)
+- [Usage](#usage)
+  * [Prerequisites](#prerequisites)
+  * [Configuration](#configuration)
+  * [Integrating with OpenAPI Generator](#integrating-with-openapi-generator)
+  * [Build and Execute](#build-and-execute)
+- [Use Cases](#use-cases)
+- [API Reference](#api-reference)
+  * [Authorization](#authorization)
+  * [Encryption and Decryption](#encryption-and-decryption)
+    - [Loading Encryption Certificate](#loading-encryption-certificate)
+    - [Loading Decryption Key](#loading-decryption-key)
+    - [Configuring JWE Instance](#configuring-jwe-instance)  
+    - [Encrypting Entire Payloads](#encrypting-entire-payloads)
+    - [Decrypting Entire Payloads](#decrypting-entire-payloads)
+  * [Request Examples](#request-examples)
+  * [Recommendation](#recommendation)
+- [Support](#support)
+- [License](#license)
 
 ## Overview <a name="overview"></a>
 This is a reference application to demonstrate how Enriched transaction API can be used for the supported operations.
-To complete
+Please see here for details on the API: [Mastercard Developers](https://developer.mastercard.com/enriched-transaction/documentation/).
+This application illustrates connecting to the Enriched Transaction API.
+To call these APIs, consumer key and .p12 files are required from your 
+[Mastercard Developers](https://developer.mastercard.com/dashboard) project.
 
 ### Compatibility <a name="compatibility"></a>
 * [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) or later
@@ -27,8 +48,21 @@ To complete
 ### Configuration <a name="configuration"></a>
 * Create an account at [Mastercard Developers](https://developer.mastercard.com/account/sign-up).  
 * Create a new project and add `Enriched Transaction` API to your project.   
+* Configure project and download signing key. It will download the zip file.  
+* Select `.p12` files from zip and copy it to `src/main/resources` in the project folder.
+* Open `${project.basedir}/src/main/resources/application.properties` and configure below parameters.
 
-TODO encryption configuration
+    >**mastercard.api.base-path=https://sandbox.api.mastercard.com/ethoca**, its a static field, will be used as a host to make API calls.
+    
+    **Below properties will be required for authentication of API calls.**
+    
+    >**mastercard.api.key-file=**, this refers to .p12 file found in the signing key. Please place .p12 file at src\main\resources in the project folder and add classpath for .p12 file.
+    
+    >**mastercard.api.consumer-key=**, this refers to your consumer key. Copy it from "Keys" section on your project page in [Mastercard Developers](https://developer.mastercard.com/dashboard)
+      
+    >**mastercard.api.keystore-alias=keyalias**, this is the default value of key alias. If it is modified, use the updated one from keys section in [Mastercard Developers](https://developer.mastercard.com/dashboard).
+    
+    >**mastercard.api.keystore-password=keystorepassword**, this is the default value of key alias. If it is modified, use the updated one from keys section in [Mastercard Developers](https://developer.mastercard.com/dashboard).
 
 ### Integrating with OpenAPI Generator <a name="integrating-with-openapi-generator"></a>
 [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) generates API client libraries from [OpenAPI Specs](https://github.com/OAI/OpenAPI-Specification). 
@@ -54,7 +88,7 @@ See also:
                 <goal>generate</goal>
             </goals>
             <configuration>
-                <inputSpec>${project.basedir}/src/main/resources/Loyalty_User_Management-api-spec.yaml</inputSpec>
+                <inputSpec>${project.basedir}/src\main\resources\Enriched-Transaction-API-spec.yml</inputSpec>
                 <generatorName>java</generatorName>
                 <library>okhttp-gson</library>
                 <generateApiTests>false</generateApiTests>
@@ -72,12 +106,12 @@ See also:
 #### Generating The API Client Sources
 Now that you have all the dependencies you need, you can generate the sources. To do this, use one of the following two methods:
 
-`Using IDE`
-* **Method 1**<br/>
-  In IntelliJ IDEA, open the Maven window **(View > Tool Windows > Maven)**. Click the icons `Reimport All Maven Projects` and `Generate Sources and Update Folders for All Projects`
+    `Using IDE`
+    * **Method 1**<br/>
+       In IntelliJ IDEA, open the Maven window **(View > Tool Windows > Maven)**. Click the icons `Reimport All Maven Projects` and `Generate Sources and Update Folders for All Projects`
 
-* **Method 2**<br/>
-  In the same menu, navigate to the commands **({Project name} > Lifecycle)**, select `clean` and `compile` then click the icon `Run Maven Build`. 
+    * **Method 2**<br/>
+       In the same menu, navigate to the commands **({Project name} > Lifecycle)**, select `clean` and `compile` then click the icon `Run Maven Build`. 
 
 `Using Terminal`
 * Navigate to the root directory of the project within a terminal window and execute `mvn clean compile` command.
@@ -92,7 +126,16 @@ When the project builds successfully you can then run the following command to s
 `java -jar target/loyalty-user-management-reference-1.0.0.jar`
 
 ## Use Cases <a name="use-cases"></a>
-TODO
+### EnrichedTransaction 
+> Case 1: [ENRICHED TRANSACTION SEARCHES](TO COMPLETE)
+
+- add description
+
+    | URL | Method | Request | Response |
+    | :-- | :----- | :------ | :------- |
+    | `/enriched-transaction/searches` | POST | EnrichedTransactionRequest | EnrichedTransactionResponse |
+
+
 ## API Reference <a name="api-reference"></a>
 TODO
 ### Request Examples <a name="request-examples"></a>
