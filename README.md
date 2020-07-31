@@ -121,7 +121,7 @@ When the project builds successfully you can then run the following command to s
 
 ## Use Cases <a name="use-cases"></a>
 ### EnrichedTransaction 
-> Case 1: [ENRICHED TRANSACTION SEARCHES](TO COMPLETE)
+> Case 1: [ENRICHED TRANSACTION SEARCHES](https://developer.mastercard.com/drafts/ethoca-consumer-digital-experience/staging/documentation/api-reference/)
 
  - Retrieves a Enriched Transactions’ details from Ethoca Consumer Digital Experience platform based on search criteria.
  - Refer to model classes for field level information.
