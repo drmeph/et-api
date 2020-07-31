@@ -121,7 +121,7 @@ When the project builds successfully you can then run the following command to s
 
 ## Use Cases <a name="use-cases"></a>
 ### EnrichedTransaction 
-> Case 1: [ENRICHED TRANSACTION SEARCHES](https://developer.mastercard.com/drafts/ethoca-consumer-digital-experience/staging/documentation/api-reference/)
+> Case 1: [ENRICHED TRANSACTION SEARCHES](TODO: ADD Link to use case)
 
  - Retrieves a Enriched Transactions’ details from Ethoca Consumer Digital Experience platform based on search criteria.
  - Refer to model classes for field level information.
@@ -133,7 +133,7 @@ When the project builds successfully you can then run the following command to s
 
 ## API Reference <a name="api-reference"></a>
 To develop a client application that consumes a RESTful Enriched Transaction API with Spring Boot, 
-refer to [the developer portal documentation]().
+refer to [the developer portal documentation](https://developer.mastercard.com/drafts/ethoca-consumer-digital-experience/staging/documentation/api-reference/).
 
 ### Authorization <a name="authorization"></a>
 The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can 
