@@ -123,21 +123,29 @@ Once you’ve added the correct properties, we can build the application. We can
 
 When the project builds successfully you can then run the following command to start the project
 
-`java -jar target/loyalty-user-management-reference-1.0.0.jar`
+`java -jar target/enriched-transaction-reference-0.0.1-SNAPSHOT.jar`
 
 ## Use Cases <a name="use-cases"></a>
 ### EnrichedTransaction 
 > Case 1: [ENRICHED TRANSACTION SEARCHES](TO COMPLETE)
 
-- add description
+ - Retrieves a Enriched Transactions’ details from Ethoca Consumer Digital Experience platform based on search criteria.
+ - Refer to model classes for field level information.
 
-    | URL | Method | Request | Response |
-    | :-- | :----- | :------ | :------- |
-    | `/enriched-transaction/searches` | POST | EnrichedTransactionRequest | EnrichedTransactionResponse |
+  | URL | Method | Request | Response |
+  | :-- | :----- | :------ | :------- |
+  | `/enriched-transaction/searches` | POST | EnrichedTransactionRequest | EnrichedTransactionResponse |
 
 
 ## API Reference <a name="api-reference"></a>
-TODO
+To develop a client application that consumes a RESTful Enriched Transaction API with Spring Boot, 
+refer to [the developer portal documentation]().
+
+### Authorization <a name="authorization"></a>
+The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can 
+use when configuring your API client. These classes will take care of adding the correct `Authorization` header 
+before sending the request.
+
 ### Request Examples <a name="request-examples"></a>
 You can change the default input passed to APIs, modify values in following files,
 * `com.mastercard.developer.example.EnrichedTransactionExample.java`
