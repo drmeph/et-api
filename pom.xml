@@ -109,6 +109,7 @@
 						<configuration>
 							<inputSpec>${project.basedir}/src/main/resources/Enriched-Transaction-API-spec.yml</inputSpec>
 							<generatorName>java</generatorName>
+							<library>okhttp-gson</library>
 							<generateApiTests>false</generateApiTests>
 							<generateModelTests>false</generateModelTests>
 							<configOptions>
