@@ -1,6 +1,6 @@
 # Reference Implementation for Mastercard Enriched Transaction
 
-[![](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Mastercard/enriched-transaction/blob/master/LICENSE)
+[![](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Mastercard/enriched-transactions/blob/master/LICENSE)
 
 ## Table of Contents
 - [Overview](#overview)
@@ -130,7 +130,7 @@ When the project builds successfully you can then run the following command to s
 
   | URL | Method | Request | Response |
   | :-- | :----- | :------ | :------- |
-  | `/enriched-transaction/searches` | POST | EnrichedTransactionRequest | EnrichedTransactionResponse |
+  | `/enriched-transactions/searches` | POST | EnrichedTransactionRequest | EnrichedTransactionResponse |
 
 
 ## API Reference <a name="api-reference"></a>
